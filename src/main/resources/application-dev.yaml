@@ -1,0 +1,65 @@
+logging:
+  config: classpath:log4j2-dev.xml
+
+spring:
+  datasource:
+    driverClassName: org.mariadb.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mariadb://localhost:3306/demo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: 12345678aA@
+
+    hikari:
+      pool-name: Hikari
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+      max-lifetime: 2000000      # Thời gian tối đa của một connection (ms)
+      idle-timeout: 30000        # Thời gian giữ connection không hoạt động (ms)
+      minimum-idle: 50           # Số connection tối thiểu trong pool
+      maximum-pool-size: 100     # Số connection tối đa trong pool
+  jpa:
+    show-sql: false  # Ẩn câu lệnh SQL trong logs
+    hibernate:
+      ddl-auto: none  # Không tự động tạo bảng (cấu hình này thường dùng cho production)
+    properties:
+      hibernate:
+        format_sql: true  # Format SQL cho dễ đọc
+        dialect: org.hibernate.dialect.PostgreSQLDialect  # Dialect cho PostgreSQL
+
+  task:
+    execution:
+      thread-name-prefix: Base-task-
+      pool:
+        core-size: 100   # Số lượng luồng lõi
+        max-size: 200    # Số lượng luồng tối đa
+        queue-capacity: 10000  # Số tác vụ có thể chờ trong hàng đợi
+    scheduling:
+      thread-name-prefix: Base-scheduling-
+      pool:
+        size: 100  # Số lượng luồng tối đa để chạy các tác vụ theo lịch
+
+  servlet:
+    multipart:
+      max-file-size: 200MB  # Giới hạn dung lượng file tải lên
+      max-request-size: 200MB  # Giới hạn tổng dung lượng request
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: notification.test.hrm01@gmail.com
+    password: wmmohxyduatnaunt
+    protocol: smtp
+    properties.mail.smtp:
+      auth: false
+      starttls:
+        enable: false
+      socketFactory:
+        port: 25
+        class: jakarta.net.ssl.SSLSocketFactory
+
+  liquibase:
+    contexts: prod
+    enabled: true
