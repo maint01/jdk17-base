@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
+import vn.com.lifesup.base.constant.ConfigConstants;
 
 import javax.sql.DataSource;
 

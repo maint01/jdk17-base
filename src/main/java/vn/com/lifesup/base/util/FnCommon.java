@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import vn.com.lifesup.base.config.ConfigConstants;
+import vn.com.lifesup.base.constant.ConfigConstants;
 import vn.com.lifesup.base.dto.common.BaseSearchDTO;
 
 import java.io.*;

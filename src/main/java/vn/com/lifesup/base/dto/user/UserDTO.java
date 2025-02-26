@@ -1,4 +1,4 @@
-package vn.com.lifesup.base.dto.common;
+package vn.com.lifesup.base.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.time.Instant;
 @Data
 public class UserDTO {
     @Schema(description = "Id người dùng", example = "1")
-    private Long id;
+    private String id;
 
     @Schema(description = "Tên đăng nhập", example = "test", requiredMode = Schema.RequiredMode.REQUIRED)
     private String username;

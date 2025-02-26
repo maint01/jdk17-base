@@ -16,9 +16,9 @@ import java.util.List;
 @ToString
 public class BaseSearchDTO {
     @Schema(description = "Trang", example = "0")
-    private Integer page;
+    private Integer page = 0;
     @Schema(description = "Số bản ghi 1 trang", example = "10")
-    private Integer pageSize;
+    private Integer pageSize = 10;
     @Schema(description = "Từ khóa tìm kiếm nhiều trường")
     private String keyword;
     private List<String> sorts;

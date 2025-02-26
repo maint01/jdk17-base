@@ -6,6 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,6 @@ import vn.com.lifesup.base.dto.common.OrderDTO;
 import java.util.List;
 import java.util.Map;
 
-@RequiredArgsConstructor
 @Repository
 public class BaseRepository {
 
@@ -24,7 +24,8 @@ public class BaseRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     /**
      * Get current session from EntityManager
@@ -39,7 +40,7 @@ public class BaseRepository {
         return namedParameterJdbcTemplate;
     }
 
-    protected <T> ApiResponse<List<T>> searchAndCountTotal(BaseSearchDTO searchDTO,
+    protected <T> ApiResponse<List<T>> queryPage(BaseSearchDTO searchDTO,
                                                            String sqlString,
                                                            Map<String, Object> parameters,
                                                            Class<T> clazz) {

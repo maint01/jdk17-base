@@ -1,6 +1,7 @@
 package vn.com.lifesup.base.security;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,6 +29,7 @@ public class DomainUserDetailsService implements UserDetailsService {
     private final Logger log = LoggerFactory.getLogger(DomainUserDetailsService.class);
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
@@ -46,9 +48,7 @@ public class DomainUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         Set<Authority> authorities = user.getAuthorities();
         authorities.forEach(authority -> grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName())));
-        UserJwt userJwt = new UserJwt();
-        userJwt.setUsername(user.getUsername());
-        userJwt.setPassword(user.getPassword());
+        UserJwt userJwt = modelMapper.map(user, UserJwt.class);
         userJwt.setGrantedAuthorities(grantedAuthorities);
         userJwt.setStatus(user.isActivated() ? 1 : 0);
         return userJwt;

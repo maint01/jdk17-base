@@ -29,9 +29,6 @@ public class TokenProvider {
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
 
     private static final String AUTHORITIES_KEY = "auth";
-    private static final String EMAIL_KEY = "email";
-    private static final String PHONE_KEY = "phone";
-    private static final String USER_STATUS = "status";
     private static final String USER_USERNAME = "username";
     private static final String USER_ID = "userId";
     private static final String FIRST_NAME = "firstName";
@@ -97,10 +94,7 @@ public class TokenProvider {
         List<GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                 .filter(auth -> !auth.trim().isEmpty()).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         UserJwt principal = UserJwt.builder()
-                .userId(claims.get(USER_ID, Long.class))
-                .status(claims.get(USER_STATUS, Integer.class))
-                .email(claims.get(EMAIL_KEY).toString())
-                .phone(claims.get(PHONE_KEY).toString())
+                .userId(claims.get(USER_ID, String.class))
                 .firstName(claims.get(FIRST_NAME).toString())
                 .lastName(claims.get(LAST_NAME).toString())
                 .username(claims.get(USER_USERNAME).toString())

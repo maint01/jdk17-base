@@ -1,8 +1,9 @@
 package vn.com.lifesup.base.constant;
 
-/**
- * @author tu.nguyenthe
- * @email: tu.nguyenthe@ivnd.com.vn
- * @date: 2/26/2025 
- */public class Constants {
+
+public class Constants {
+    private Constants() {
+    }
+
+    public static final String LOGIN_REGEX = "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$";
 }

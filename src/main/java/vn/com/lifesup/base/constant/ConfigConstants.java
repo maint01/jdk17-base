@@ -1,4 +1,4 @@
-package vn.com.lifesup.base.config;
+package vn.com.lifesup.base.constant;
 
 /**
  * Application constants.

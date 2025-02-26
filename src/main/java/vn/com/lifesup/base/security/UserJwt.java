@@ -22,7 +22,7 @@ public class UserJwt implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long userId;
+    private String userId;
     private String username;
     private String password;
     @Getter

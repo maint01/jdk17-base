@@ -1,8 +1,14 @@
 package vn.com.lifesup.base.dto.common;
 
-/**
- * @author tu.nguyenthe
- * @email: tu.nguyenthe@ivnd.com.vn
- * @date: 2/26/2025 
- */public class OrderDTO {
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+
+@Data
+public class OrderDTO {
+    public static final String DESC = "desc";
+    public static final String ASC = "asc";
+    private String property;
+    @JsonProperty
+    private boolean ascending;
 }

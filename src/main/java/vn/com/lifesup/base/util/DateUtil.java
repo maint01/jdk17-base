@@ -3,7 +3,7 @@ package vn.com.lifesup.base.util;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import vn.com.lifesup.base.config.ConfigConstants;
+import vn.com.lifesup.base.constant.ConfigConstants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
