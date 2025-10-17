@@ -8,16 +8,18 @@ spring:
 
     hikari:
       pool-name: Hikari
+      max-lifetime: 1800000      # Thời gian tối đa của một connection (ms)
+      idle-timeout: 300000        # Thời gian giữ connection không hoạt động (ms)
+      minimum-idle: 50           # Số connection tối thiểu trong pool
+      maximum-pool-size: 100     # Số connection tối đa trong pool
+      connection-timeout: 60000 # (60 giây) Thời gian chờ tối đa để lấy một kết nối từ pool
       auto-commit: false
+      keepalive-time: 30000
       data-source-properties:
         cachePrepStmts: true
         prepStmtCacheSize: 250
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
-      max-lifetime: 2000000      # Thời gian tối đa của một connection (ms)
-      idle-timeout: 30000        # Thời gian giữ connection không hoạt động (ms)
-      minimum-idle: 50           # Số connection tối thiểu trong pool
-      maximum-pool-size: 100     # Số connection tối đa trong pool
   jpa:
     show-sql: false  # Ẩn câu lệnh SQL trong logs
     hibernate:
@@ -25,7 +27,7 @@ spring:
     properties:
       hibernate:
         format_sql: true  # Format SQL cho dễ đọc
-        dialect: org.hibernate.dialect.PostgreSQLDialect  # Dialect cho PostgreSQL
+        dialect: org.hibernate.dialect.MariaDBDialect  # Dialect cho MariaDBDialect
 
   task:
     execution:
@@ -55,8 +57,29 @@ spring:
         enable: false
       socketFactory:
         port: 25
-        class: jakarta.net.ssl.SSLSocketFactory
+  data:
+    redis:
+      repositories:
+        enabled: false
 
   liquibase:
     contexts: prod
     enabled: true
+
+application:
+  redis:
+    stand-alone-host: 10.30.132.67
+    stand-alone-port: 8889
+
+    sentinel:
+      name-node: mymaster
+      sentinel-nodes:
+        - 10.254.130.178:8895
+      sentinel-password: "+coffpmLQ4pafDJk4vC8Gg=="
+      redis-password: "+coffpmLQ4pafDJk4vC8Gg=="
+
+    topic:
+      qr-login: /topic/loginQR
+      notification: /topic/notification
+      layer2cache: /topic/layer2-cache
+      feedback: /topic/feedback

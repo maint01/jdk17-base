@@ -1,4 +1,4 @@
-package vn.com.lifesup.base.service.user;
+package vn.com.lifesup.base.service;
 
 import vn.com.lifesup.base.dto.common.ApiResponse;
 import vn.com.lifesup.base.dto.user.UserDTO;

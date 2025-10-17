@@ -8,8 +8,8 @@ import vn.com.lifesup.base.config.SpringApplicationContext;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class MessageUtil {
-    private MessageUtil() {}
+public class Translator {
+    private Translator() {}
 
     public static String getMessage(String code, @Nullable Object[] args) {
         ResourceBundleMessageSource messageSource = SpringApplicationContext.bean(ResourceBundleMessageSource.class);
@@ -21,7 +21,7 @@ public class MessageUtil {
         ResourceBundleMessageSource messageSource = SpringApplicationContext.bean(ResourceBundleMessageSource.class);
         Locale locale = LocaleContextHolder.getLocale();
         if (args != null && args.length > 0) {
-            args = Arrays.stream(args).map(MessageUtil::getMessage).toArray(String[]::new);
+            args = Arrays.stream(args).map(Translator::getMessage).toArray(String[]::new);
         }
         return messageSource.getMessage(code, args, locale);
     }

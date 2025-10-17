@@ -1,7 +1,9 @@
 package vn.com.lifesup.base.util;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.extern.slf4j.Slf4j;
+import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -20,7 +22,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Builder
-@Slf4j
+@AllArgsConstructor
+@NoArgsConstructor
+@Log4j2
 public class ExcelWriter<T> {
 
     private String templateFile;

@@ -1,13 +1,10 @@
-package vn.com.lifesup.base.service.user;
+package vn.com.lifesup.base.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.CacheManager;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +16,7 @@ import vn.com.lifesup.base.model.User;
 import vn.com.lifesup.base.repository.UserCusRepository;
 import vn.com.lifesup.base.repository.UserRepository;
 import vn.com.lifesup.base.security.SecurityUtils;
+import vn.com.lifesup.base.service.UserService;
 
 import java.time.Instant;
 import java.util.List;

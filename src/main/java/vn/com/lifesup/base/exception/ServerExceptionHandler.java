@@ -20,7 +20,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import vn.com.lifesup.base.dto.common.ApiResponse;
 import vn.com.lifesup.base.util.ErrorCode;
-import vn.com.lifesup.base.util.MessageUtil;
+import vn.com.lifesup.base.util.Translator;
 
 import javax.naming.AuthenticationException;
 import java.nio.file.AccessDeniedException;
@@ -93,7 +93,7 @@ public class ServerExceptionHandler {
             return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(ApiResponse.error(MessageUtil.getMessage("err.system.internal-server")), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(ApiResponse.error(Translator.getMessage("err.system.internal-server")), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

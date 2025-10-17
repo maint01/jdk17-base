@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.com.lifesup.base.dto.common.ApiResponse;
 import vn.com.lifesup.base.dto.user.UserDTO;
 import vn.com.lifesup.base.dto.user.UserSearchDTO;
-import vn.com.lifesup.base.service.user.UserService;
+import vn.com.lifesup.base.service.UserService;
 
 import java.util.List;
 

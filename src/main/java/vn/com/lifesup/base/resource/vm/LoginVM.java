@@ -3,7 +3,7 @@ package vn.com.lifesup.base.resource.vm;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * View Model object for storing a user's credentials.

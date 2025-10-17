@@ -17,7 +17,7 @@ import vn.com.lifesup.base.resource.vm.LoginVM;
 import vn.com.lifesup.base.security.jwt.JWTFilter;
 import vn.com.lifesup.base.security.jwt.TokenProvider;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api")

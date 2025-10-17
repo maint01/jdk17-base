@@ -12,12 +12,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import vn.com.lifesup.base.config.SecurityProperties;
+import vn.com.lifesup.base.config.properties.SecurityProperties;
 import vn.com.lifesup.base.management.SecurityMetersService;
 import vn.com.lifesup.base.security.UserJwt;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +35,7 @@ public class TokenProvider {
     private static final String LAST_NAME = "lastName";
 
     private static final String INVALID_JWT_TOKEN = "Invalid JWT token.";
-    private final Key key;
+    private final SecretKey key;
 
     private final JwtParser jwtParser;
 
@@ -58,7 +58,7 @@ public class TokenProvider {
             keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         }
         key = Keys.hmacShaKeyFor(keyBytes);
-        jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
+        jwtParser = Jwts.parser().verifyWith(key).build();
         this.tokenValidityInMilliseconds = 1000
                 * securityProperties.getAuthentication().getJwt().getTokenValidityInSeconds();
         this.tokenValidityInMillisecondsForRememberMe = 1000 * securityProperties.getAuthentication()
@@ -80,16 +80,19 @@ public class TokenProvider {
             validity = new Date(now + this.tokenValidityInMilliseconds);
         }
 
-        return Jwts.builder().setSubject(user.getUsername()).claim(AUTHORITIES_KEY, authorities)
+        return Jwts.builder()
+                .subject(user.getUsername())
+                .claim(AUTHORITIES_KEY, authorities)
                 .claim(USER_USERNAME, user.getUsername())
                 .claim(USER_ID, user.getUserId())
                 .claim(FIRST_NAME, user.getFirstName())
                 .claim(LAST_NAME, user.getLastName())
-                .signWith(key, SignatureAlgorithm.HS512).setExpiration(validity).compact();
+                .signWith(key, Jwts.SIG.HS512)
+                .expiration(validity).compact();
     }
 
     public Authentication getAuthentication(String token) {
-        Claims claims = jwtParser.parseClaimsJws(token).getBody();
+        Claims claims = jwtParser.parseSignedClaims(token).getPayload();
 
         List<GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                 .filter(auth -> !auth.trim().isEmpty()).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
@@ -106,7 +109,7 @@ public class TokenProvider {
 
     public boolean validateToken(String authToken) {
         try {
-            jwtParser.parseClaimsJws(authToken);
+            jwtParser.parseSignedClaims(authToken);
 
             return true;
         } catch (ExpiredJwtException e) {

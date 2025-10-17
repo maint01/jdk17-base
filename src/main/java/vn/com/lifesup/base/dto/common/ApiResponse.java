@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import vn.com.lifesup.base.util.ErrorCode;
-import vn.com.lifesup.base.util.MessageUtil;
+import vn.com.lifesup.base.util.Translator;
 
 import java.util.List;
 
@@ -25,13 +25,13 @@ public class ApiResponse<T> {
 
     public ApiResponse(String code, String message, T data) {
         this.code = code;
-        this.message = MessageUtil.getMessage(message);
+        this.message = Translator.getMessage(message);
         this.data = data;
     }
 
     public ApiResponse(String code, String message, T data, Integer totalRecords) {
         this.code = code;
-        this.message = MessageUtil.getMessage(message);
+        this.message = Translator.getMessage(message);
         this.data = data;
         this.totalRecords = totalRecords;
     }
@@ -71,11 +71,11 @@ public class ApiResponse<T> {
 
 
     public static <T> ApiResponse<T> error(ErrorCode errorCode) {
-        return new ApiResponse<>(errorCode.getCode(), MessageUtil.getMessage(errorCode), null);
+        return new ApiResponse<>(errorCode.getCode(), Translator.getMessage(errorCode), null);
     }
 
     public static <T> ApiResponse<T> error(T data, ErrorCode errorCode) {
-        return new ApiResponse<>(errorCode.getCode(), MessageUtil.getMessage(errorCode), data);
+        return new ApiResponse<>(errorCode.getCode(), Translator.getMessage(errorCode), data);
     }
 
     public static <T> ApiResponse<T> error(T data, String errorCode, String errorMessage) {

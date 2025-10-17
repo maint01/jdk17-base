@@ -5,18 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
-import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
-import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
-import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
-import org.apache.hc.core5.http.URIScheme;
-import org.apache.hc.core5.http.config.Registry;
-import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
+import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
+import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.apache.hc.core5.ssl.TrustStrategy;
 import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,48 +30,47 @@ import javax.sql.DataSource;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 
 @Configuration
 public class BeanConfig {
     private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
     private static final int DEFAULT_READ_TIMEOUT = 60000;
     @Bean
-    public RestTemplate restTemplate() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        RestTemplateBuilder builder = new RestTemplateBuilder();
-
-        // Create an SSLContext that bypasses SSL validation
+    public RestTemplate restTemplate(RestTemplateBuilder builder) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslContext = SSLContextBuilder.create()
-                .loadTrustMaterial((X509Certificate[] chain, String authType) -> true) // Trust all certificates
+                .loadTrustMaterial(null, (TrustStrategy) (chain, authType) -> true)
                 .build();
 
-        // Create SSLConnectionSocketFactory with the SSLContext and NoopHostnameVerifier
-       SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                sslContext, NoopHostnameVerifier.INSTANCE);
+        TlsSocketStrategy sslSocketFactory = new DefaultClientTlsStrategy(sslContext);
 
-        // Create a registry of custom connection socket factories for both HTTP and HTTPS
-        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register(URIScheme.HTTP.getId(), new PlainConnectionSocketFactory())
-                .register(URIScheme.HTTPS.getId(), sslSocketFactory)
+        HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setTlsSocketStrategy(sslSocketFactory) // Set factory cho HTTPS
+                .setMaxConnTotal(100)
+                .setMaxConnPerRoute(20)
+
+                .setDefaultConnectionConfig(ConnectionConfig.custom()
+                        .setValidateAfterInactivity(TimeValue.ofSeconds(30))
+                        .build())
+
+                .setDefaultSocketConfig(SocketConfig.custom()
+                        .setSoTimeout(Timeout.ofSeconds(30)) // Ví dụ: Cấu hình socket timeout
+                        .build())
                 .build();
 
-        // Create a connection manager using the custom registry
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        connectionManager.setMaxTotal(100);  // Set max total connections
-        connectionManager.setDefaultMaxPerRoute(20);  // Set max connections per route
-        connectionManager.setDefaultConnectionConfig(ConnectionConfig.custom().setValidateAfterInactivity(TimeValue.ofSeconds(30)).build());  // Validate connections after 30 seconds of inactivity
-
-        // Create the CloseableHttpClient with the custom connection manager
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(connectionManager)
-                .evictIdleConnections(TimeValue.ofMinutes(5))  // Evict idle connections after 5 minutes
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setResponseTimeout(Timeout.ofMilliseconds(DEFAULT_CONNECT_TIMEOUT))
+                        .setConnectionRequestTimeout(Timeout.ofMilliseconds(DEFAULT_READ_TIMEOUT))
+                        .build())
+                .evictIdleConnections(TimeValue.ofMinutes(5))
                 .build();
 
-        // Use HttpComponentsClientHttpRequestFactory to integrate the custom HttpClient with RestTemplate
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+
         factory.setConnectionRequestTimeout(DEFAULT_CONNECT_TIMEOUT);
         factory.setConnectTimeout(DEFAULT_READ_TIMEOUT);
-        // Build the RestTemplate using the custom request factory
+
         return builder
                 .requestFactory(() -> factory)
                 .build();
