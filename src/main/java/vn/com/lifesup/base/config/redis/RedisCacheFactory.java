@@ -1,7 +1,6 @@
 package vn.com.lifesup.base.config.redis;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +9,7 @@ import java.util.concurrent.ConcurrentMap;
 
 @Component
 @RequiredArgsConstructor
-public class RedisCacheFactory {
+public class RedisCacheFactory<K, V> {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final ConcurrentMap<String, RedisCache<?, ?>> cacheInstances = new ConcurrentHashMap<>();

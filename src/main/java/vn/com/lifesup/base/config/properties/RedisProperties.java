@@ -12,6 +12,7 @@ import java.util.HashSet;
 @Configuration
 @ConfigurationProperties(prefix = "application.redis")
 public class RedisProperties {
+    private String mode;
     private String standAloneHost;
     private int standAlonePort;
     private Sentinel sentinel;

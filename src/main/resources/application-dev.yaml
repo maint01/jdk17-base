@@ -43,6 +43,7 @@ spring:
 
   servlet:
     multipart:
+      file-size-threshold: 2KB
       max-file-size: 200MB  # Giới hạn dung lượng file tải lên
       max-request-size: 200MB  # Giới hạn tổng dung lượng request
   mail:
@@ -67,14 +68,32 @@ spring:
     enabled: true
 
 application:
+  cors:
+    allowed-origins: "*"
+    allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+    allowed-headers: "*"
+    exposed-headers: "Authorization,Content-Disposition,Content-Type,Cache-Control,Response-Content,Accept-Language,X-TZ-OFFSET,X-REQUEST-ID"
+    allow-credentials: false
+    max-age: 31536000
+  security:
+    authentication:
+      jwt:
+        base64-secret: RWdaamFISnZiV1V5QmdnQUVFVVlPVElKQ0FFUUFCZ1RHSUFFTWdrSUFoQUFHQk1ZZ0FReURBZ0RFQUFZQ2hnVEdCWVlIaklLQ0FRUUFCZ1RHQllZSGpJTUNBVVFBQmdLR0JNWUZoZ2VNZ29JQmhBQUdCTVlGaGdlTWdvSUJ4QUFHQk1ZRmhnZU1nb0lDQkFBR0JNWUZoZ2VNZ29JQ1JBQUdCTVlGaGdlMGdFSU5EZ3dPV293YWplb0FnaXdBZ0h4QlNQRHRYUDh0Mlg1OFFVanc3VnpfTGRs
+  minio:
+    endpoint: http://localhost:9000
+    access-key: admin
+    secret-key: admin123
+    bucket-name: my-bucket
+    secure: false
   redis:
-    stand-alone-host: 10.30.132.67
-    stand-alone-port: 8889
+    mode: standalone # standalone | sentinel
+    stand-alone-host: localhost
+    stand-alone-port: 6379
 
     sentinel:
       name-node: mymaster
       sentinel-nodes:
-        - 10.254.130.178:8895
+        - 10.54.30.78:8195
       sentinel-password: "+coffpmLQ4pafDJk4vC8Gg=="
       redis-password: "+coffpmLQ4pafDJk4vC8Gg=="
 

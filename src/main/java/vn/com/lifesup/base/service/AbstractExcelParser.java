@@ -18,6 +18,7 @@ import vn.com.lifesup.base.util.Translator;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -134,7 +135,7 @@ public abstract class AbstractExcelParser<T> {
 
     // Mapping
     @SuppressWarnings("java:S3011")
-    private T mapRowToClass(Row row) throws Exception {
+    private T mapRowToClass(Row row) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         T instance = getTargetClass().getDeclaredConstructor().newInstance();
         StringBuilder errors = new StringBuilder();
 
@@ -147,7 +148,7 @@ public abstract class AbstractExcelParser<T> {
 
             // validate
             if (annotation.notNull() && StringUtils.isBlank(value)) {
-                errors.append(Translator.getMessage("ERR_01", annotation.fieldName())).append("\n");
+                errors.append(Translator.getMessage("VALID_000", annotation.fieldName())).append("\n");
             }
 
             validateMaxLength(annotation, value, errors);
@@ -178,7 +179,7 @@ public abstract class AbstractExcelParser<T> {
         }
 
         if (!Pattern.matches(annotation.pattern(), value)) {
-            errors.append(Translator.getMessage("ERR_02", annotation.fieldName()))
+            errors.append(Translator.getMessage("VALID_001", annotation.fieldName()))
                     .append("\n");
         }
     }
@@ -252,7 +253,7 @@ public abstract class AbstractExcelParser<T> {
     private void validateMaxLength(ExcelColumn annotation, String value, StringBuilder errors) {
         if (annotation.maxLength() > 0 && value.length() > annotation.maxLength()) {
             errors.append(Translator
-                            .getMessage("error.common.maxLength",
+                            .getMessage("VALID_002",
                                     annotation.fieldName(), String.valueOf(annotation.maxLength())))
                     .append("\n");
         }
@@ -261,7 +262,7 @@ public abstract class AbstractExcelParser<T> {
     private void validateMinLength(ExcelColumn annotation, String value, StringBuilder errors) {
         if (annotation.minLength() > 0 && value.length() < annotation.minLength()) {
             errors.append(Translator
-                            .getMessage("error.common.minLength",
+                            .getMessage("VALID_003",
                                     annotation.fieldName(), String.valueOf(annotation.minLength())))
                     .append("\n");
         }

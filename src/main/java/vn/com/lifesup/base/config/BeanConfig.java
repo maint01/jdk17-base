@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.minio.MinioClient;
+import lombok.RequiredArgsConstructor;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -24,6 +26,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.client.RestTemplate;
+import vn.com.lifesup.base.config.properties.MinioProperties;
 
 import javax.net.ssl.SSLContext;
 import javax.sql.DataSource;
@@ -31,10 +34,14 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
+@RequiredArgsConstructor
 @Configuration
 public class BeanConfig {
     private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
     private static final int DEFAULT_READ_TIMEOUT = 60000;
+
+    private final MinioProperties properties;
+
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslContext = SSLContextBuilder.create()
@@ -96,6 +103,15 @@ public class BeanConfig {
         return mapper;
     }
 
+
+
+    @Bean
+    public MinioClient minioClient() {
+        return MinioClient.builder()
+                .endpoint(properties.getEndpoint())
+                .credentials(properties.getAccessKey(), properties.getSecretKey())
+                .build();
+    }
 
 
     @Bean

@@ -76,9 +76,9 @@ public class FTPUtil {
         makeDirectories(ftpClient, remoteDirPath);
         boolean uploaded = uploadSingleFile(ftpClient, remoteDirPath, fileName, bytes);
         if (uploaded) {
-            System.out.println("UPLOADED a file to: " + remoteDirPath + "/" + fileName);
+            log.info("UPLOADED a file to: {}", remoteDirPath + "/" + fileName);
         } else {
-            System.out.println("COULD NOT upload the file: " + fileName);
+            log.info("COULD NOT upload the file: {}", fileName);
             throw new IOException();
         }
     }
@@ -112,20 +112,21 @@ public class FTPUtil {
     public static boolean makeDirectories(FTPClient ftpClient, String dirPath)
             throws IOException {
         String[] pathElements = dirPath.split("/");
-        if (pathElements != null && pathElements.length > 0) {
-            for (String singleDir : pathElements) {
-                boolean existed = ftpClient.changeWorkingDirectory(singleDir);
+        if (pathElements.length < 2) {
+            return true;
+        }
+        for (String singleDir : pathElements) {
+            boolean existed = ftpClient.changeWorkingDirectory(singleDir);
+            showServerReply(ftpClient);
+            if (!existed) {
+                boolean created = ftpClient.makeDirectory(singleDir);
                 showServerReply(ftpClient);
-                if (!existed) {
-                    boolean created = ftpClient.makeDirectory(singleDir);
-                    showServerReply(ftpClient);
-                    if (created) {
-                        System.out.println("CREATED directory: " + singleDir);
-                        ftpClient.changeWorkingDirectory(singleDir);
-                    } else {
-                        System.out.println("COULD NOT create directory: " + singleDir);
-                        return false;
-                    }
+                if (created) {
+                    log.info("CREATED directory: {}", singleDir);
+                    ftpClient.changeWorkingDirectory(singleDir);
+                } else {
+                    log.info("COULD NOT create directory: {}", singleDir);
+                    return false;
                 }
             }
         }
@@ -134,9 +135,9 @@ public class FTPUtil {
 
     public static void showServerReply(FTPClient ftpClient) {
         String[] replies = ftpClient.getReplyStrings();
-        if (replies != null && replies.length > 0) {
+        if (replies != null) {
             for (String aReply : replies) {
-                System.out.println("SERVER: " + aReply);
+                log.info("SERVER: {}", aReply);
             }
         }
     }

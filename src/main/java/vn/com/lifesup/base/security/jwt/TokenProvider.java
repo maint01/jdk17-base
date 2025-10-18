@@ -44,8 +44,9 @@ public class TokenProvider {
     private final long tokenValidityInMillisecondsForRememberMe;
 
     private final SecurityMetersService securityMetersService;
+    private final SecurityProperties securityProperties;
 
-    public TokenProvider(SecurityProperties securityProperties, SecurityMetersService securityMetersService) {
+    public TokenProvider(SecurityMetersService securityMetersService, SecurityProperties securityProperties) {
         byte[] keyBytes;
         String secret = securityProperties.getAuthentication().getJwt().getBase64Secret();
         if (!ObjectUtils.isEmpty(secret)) {
@@ -65,6 +66,7 @@ public class TokenProvider {
                 .getJwt().getTokenValidityInSecondsForRememberMe();
 
         this.securityMetersService = securityMetersService;
+        this.securityProperties = securityProperties;
     }
 
     public String createToken(Authentication authentication, boolean rememberMe) {
@@ -81,6 +83,8 @@ public class TokenProvider {
         }
 
         return Jwts.builder()
+                .issuer(securityProperties.getAuthentication().getJwt().getIssuer())
+                .issuedAt(new Date(now))
                 .subject(user.getUsername())
                 .claim(AUTHORITIES_KEY, authorities)
                 .claim(USER_USERNAME, user.getUsername())

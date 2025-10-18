@@ -51,23 +51,25 @@ public class UserCusRepositoryImpl extends BaseRepository implements UserCusRepo
     }
 
     private static StringBuilder getStringBuilder() {
-        String queryString = "select\n" +
-                "    user.id\n" +
-                "    , user.login\n" +
-                "    , concat(user.first_name, ' ', user.last_name)  fullName\n" +
-                "    , user.email\n" +
-                "    , user.activated status\n" +
-                "    , case when user.activated = 1 then 'Hoạt động' else 'Không hoạt động' end statusName\n" +
-                "    , user.lang_key\n" +
-                "    , user.created_by createdBy\n" +
-                "    , user.created_date createdDate\n" +
-                "    , user.last_modified_by lastModifiedBy\n" +
-                "    , user.last_modified_date lastModifiedDate\n" +
-                "    , group_concat(authority.name) authority\n" +
-                "from jhi_user user\n" +
-                "join jhi_user_authority map on map.user_id=user.id\n" +
-                "join jhi_authority authority on authority.name=map.authority_name\n" +
-                "where 1=1";
+        String queryString = """
+            select
+                user.id
+                , user.login
+                , concat(user.first_name, ' ', user.last_name)  fullName
+                , user.email
+                , user.activated status
+                , case when user.activated = 1 then 'Hoạt động' else 'Không hoạt động' end statusName
+                , user.lang_key
+                , user.created_by createdBy
+                , user.created_date createdDate
+                , user.last_modified_by lastModifiedBy
+                , user.last_modified_date lastModifiedDate
+                , group_concat(authority.name) authority
+            from jhi_user user
+            join jhi_user_authority map on map.user_id=user.id
+            join jhi_authority authority on authority.name=map.authority_name
+            where 1=1
+        """;
         return new StringBuilder(queryString);
     }
 }

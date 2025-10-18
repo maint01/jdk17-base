@@ -1,4 +1,4 @@
-package vn.com.lifesup.base.config.redis;
+package vn.com.lifesup.base.config.redis.serializer;
 
 
 import com.fasterxml.jackson.databind.JavaType;

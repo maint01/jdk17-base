@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,6 +25,16 @@ public class RedisConfiguration {
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
+        if ("sentinel".equalsIgnoreCase(redisProperties.getMode())) {
+            return sentinelConfig();
+        }
+        RedisStandaloneConfiguration standaloneConfig = new RedisStandaloneConfiguration();
+        standaloneConfig.setHostName(redisProperties.getStandAloneHost());
+        standaloneConfig.setPort(redisProperties.getStandAlonePort());
+        return new LettuceConnectionFactory(standaloneConfig);
+    }
+
+    private LettuceConnectionFactory sentinelConfig() {
         final SocketOptions socketOptions =
                 SocketOptions.builder().connectTimeout(Duration.ofSeconds(30)).build();
 
@@ -57,6 +68,7 @@ public class RedisConfiguration {
 
         return lettuceConnectionFactory;
     }
+
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
